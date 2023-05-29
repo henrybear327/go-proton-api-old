@@ -111,7 +111,7 @@ func (l Link) GetHashKey(nodeKR *crypto.KeyRing) ([]byte, error) {
 	return dec.GetBinary(), nil
 }
 
-func (l Link) GetSessionKey(nodeKR *crypto.KeyRing) (*crypto.SessionKey, error) {
+func (l Link) GetSessionKey(addrKR, nodeKR *crypto.KeyRing) (*crypto.SessionKey, error) {
 	if l.Type != LinkTypeFile {
 		return nil, errors.New("link is not a file")
 	}
@@ -131,7 +131,7 @@ func (l Link) GetSessionKey(nodeKR *crypto.KeyRing) (*crypto.SessionKey, error) 
 		return nil, err
 	}
 
-	if err := nodeKR.VerifyDetached(crypto.NewPlainMessage(key.Key), sig, crypto.GetUnixTime()); err != nil {
+	if err := addrKR.VerifyDetached(crypto.NewPlainMessage(key.Key), sig, crypto.GetUnixTime()); err != nil {
 		return nil, err
 	}
 

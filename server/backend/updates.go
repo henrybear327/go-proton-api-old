@@ -1,8 +1,8 @@
 package backend
 
 import (
-	"github.com/ProtonMail/go-proton-api"
 	"github.com/bradenaw/juniper/xslices"
+	"github.com/henrybear327/go-proton-api"
 )
 
 func merge(updates []update) []update {

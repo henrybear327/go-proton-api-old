@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/ProtonMail/go-proton-api"
 	"github.com/gin-gonic/gin"
+	"github.com/henrybear327/go-proton-api"
 	"net/http"
 )
 

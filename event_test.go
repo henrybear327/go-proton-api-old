@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ProtonMail/go-proton-api"
-	"github.com/ProtonMail/go-proton-api/server"
 	"github.com/google/uuid"
+	"github.com/henrybear327/go-proton-api"
+	"github.com/henrybear327/go-proton-api/server"
 	"github.com/stretchr/testify/require"
 )
 

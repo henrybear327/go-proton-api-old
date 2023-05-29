@@ -1,4 +1,4 @@
-module github.com/ProtonMail/go-proton-api
+module github.com/henrybear327/go-proton-api
 
 go 1.18
 

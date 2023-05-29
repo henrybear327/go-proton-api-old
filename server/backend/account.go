@@ -3,10 +3,10 @@ package backend
 import (
 	"sync"
 
-	"github.com/ProtonMail/go-proton-api"
 	"github.com/ProtonMail/gopenpgp/v2/crypto"
 	"github.com/bradenaw/juniper/xslices"
 	"github.com/google/uuid"
+	"github.com/henrybear327/go-proton-api"
 )
 
 type account struct {
