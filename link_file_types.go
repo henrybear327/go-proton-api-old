@@ -1,10 +1,18 @@
 package proton
 
+import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
+
+	"github.com/ProtonMail/gopenpgp/v2/crypto"
+)
+
 type CreateFileReq struct {
 	ParentLinkID string
 
 	Name     string // Encrypted File Name
-	Hash     string // Encrypted content hash
+	Hash     string // Encrypted File Name Hash
 	MIMEType string // MIME Type
 
 	ContentKeyPacket          string // The block's key packet, encrypted with the node key.
@@ -15,6 +23,60 @@ type CreateFileReq struct {
 	NodePassphraseSignature string // The signature of the NodePassphrase
 
 	SignatureAddress string // Signature email address used to sign passphrase and name
+}
+
+func (createFileReq *CreateFileReq) SetName(name string, nodeKR *crypto.KeyRing) error {
+	clearTextName := crypto.NewPlainMessageFromString(name)
+
+	encName, err := nodeKR.Encrypt(clearTextName, nodeKR)
+	if err != nil {
+		return err
+	}
+
+	armoredEncName, err := encName.GetArmored()
+	if err != nil {
+		return err
+	}
+
+	createFileReq.Name = armoredEncName
+	return nil
+}
+
+func (createFileReq *CreateFileReq) SetHash(name string, hashKey []byte) error {
+	mac := hmac.New(sha256.New, hashKey)
+	_, err := mac.Write([]byte(name))
+	if err != nil {
+		return err
+	}
+
+	createFileReq.Hash = hex.EncodeToString(mac.Sum(nil))
+	return nil
+}
+
+func (createFileReq *CreateFileReq) SetContentKeyPacketAndSignature(nodeKR *crypto.KeyRing) error {
+	newSessionKey, err := crypto.GenerateSessionKey()
+	if err != nil {
+		return err
+	}
+
+	encSessionKey, err := nodeKR.EncryptSessionKey(newSessionKey)
+	if err != nil {
+		return err
+	}
+
+	sessionKeyPlainMessage := crypto.NewPlainMessage(newSessionKey.Key)
+	sessionKeySignature, err := nodeKR.SignDetached(sessionKeyPlainMessage)
+	if err != nil {
+		return err
+	}
+	armoredSessionKeySignature, err := sessionKeySignature.GetArmored()
+	if err != nil {
+		return err
+	}
+
+	createFileReq.ContentKeyPacket = hex.EncodeToString(encSessionKey)
+	createFileReq.ContentKeyPacketSignature = armoredSessionKeySignature
+	return nil
 }
 
 type CreateFileRes struct {
