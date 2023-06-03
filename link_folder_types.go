@@ -3,7 +3,7 @@ package proton
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"encoding/hex"
+	"encoding/base64"
 
 	"github.com/ProtonMail/gopenpgp/v2/crypto"
 )
@@ -47,7 +47,7 @@ func (createFolderReq *CreateFolderReq) SetHash(name string, hashKey []byte) err
 		return err
 	}
 
-	createFolderReq.Hash = hex.EncodeToString(mac.Sum(nil))
+	createFolderReq.Hash = base64.StdEncoding.EncodeToString(mac.Sum(nil))
 	return nil
 }
 

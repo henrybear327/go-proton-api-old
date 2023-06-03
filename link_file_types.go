@@ -3,7 +3,7 @@ package proton
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"encoding/hex"
+	"encoding/base64"
 
 	"github.com/ProtonMail/gopenpgp/v2/crypto"
 )
@@ -49,23 +49,23 @@ func (createFileReq *CreateFileReq) SetHash(name string, hashKey []byte) error {
 		return err
 	}
 
-	createFileReq.Hash = hex.EncodeToString(mac.Sum(nil))
+	createFileReq.Hash = base64.StdEncoding.EncodeToString(mac.Sum(nil))
 	return nil
 }
 
-func (createFileReq *CreateFileReq) SetContentKeyPacketAndSignature(nodeKR *crypto.KeyRing) error {
+func (createFileReq *CreateFileReq) SetContentKeyPacketAndSignature(kr *crypto.KeyRing) error {
 	newSessionKey, err := crypto.GenerateSessionKey()
 	if err != nil {
 		return err
 	}
 
-	encSessionKey, err := nodeKR.EncryptSessionKey(newSessionKey)
+	encSessionKey, err := kr.EncryptSessionKey(newSessionKey)
 	if err != nil {
 		return err
 	}
 
 	sessionKeyPlainMessage := crypto.NewPlainMessage(newSessionKey.Key)
-	sessionKeySignature, err := nodeKR.SignDetached(sessionKeyPlainMessage)
+	sessionKeySignature, err := kr.SignDetached(sessionKeyPlainMessage)
 	if err != nil {
 		return err
 	}
@@ -74,7 +74,7 @@ func (createFileReq *CreateFileReq) SetContentKeyPacketAndSignature(nodeKR *cryp
 		return err
 	}
 
-	createFileReq.ContentKeyPacket = hex.EncodeToString(encSessionKey)
+	createFileReq.ContentKeyPacket = base64.StdEncoding.EncodeToString(encSessionKey)
 	createFileReq.ContentKeyPacketSignature = armoredSessionKeySignature
 	return nil
 }
