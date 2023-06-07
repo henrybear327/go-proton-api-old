@@ -25,20 +25,20 @@ type CreateFileReq struct {
 	SignatureAddress string // Signature email address used to sign passphrase and name
 }
 
-func (createFileReq *CreateFileReq) SetName(name string, nodeKR *crypto.KeyRing) error {
+func (createFileReq *CreateFileReq) SetName(name string, addrKR, nodeKR *crypto.KeyRing) error {
 	clearTextName := crypto.NewPlainMessageFromString(name)
 
-	encName, err := nodeKR.Encrypt(clearTextName, nodeKR)
+	encName, err := nodeKR.Encrypt(clearTextName, addrKR)
 	if err != nil {
 		return err
 	}
 
-	armoredEncName, err := encName.GetArmored()
+	encNameString, err := encName.GetArmored()
 	if err != nil {
 		return err
 	}
 
-	createFileReq.Name = armoredEncName
+	createFileReq.Name = encNameString
 	return nil
 }
 
@@ -50,10 +50,11 @@ func (createFileReq *CreateFileReq) SetHash(name string, hashKey []byte) error {
 	}
 
 	createFileReq.Hash = base64.StdEncoding.EncodeToString(mac.Sum(nil))
+
 	return nil
 }
 
-func (createFileReq *CreateFileReq) SetContentKeyPacketAndSignature(kr *crypto.KeyRing) error {
+func (createFileReq *CreateFileReq) SetContentKeyPacketAndSignature(kr, addrKR *crypto.KeyRing) error {
 	newSessionKey, err := crypto.GenerateSessionKey()
 	if err != nil {
 		return err
@@ -65,7 +66,7 @@ func (createFileReq *CreateFileReq) SetContentKeyPacketAndSignature(kr *crypto.K
 	}
 
 	sessionKeyPlainMessage := crypto.NewPlainMessage(newSessionKey.Key)
-	sessionKeySignature, err := kr.SignDetached(sessionKeyPlainMessage)
+	sessionKeySignature, err := addrKR.SignDetached(sessionKeyPlainMessage)
 	if err != nil {
 		return err
 	}

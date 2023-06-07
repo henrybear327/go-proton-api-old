@@ -48,6 +48,7 @@ func (createFolderReq *CreateFolderReq) SetHash(name string, hashKey []byte) err
 	}
 
 	createFolderReq.Hash = base64.StdEncoding.EncodeToString(mac.Sum(nil))
+
 	return nil
 }
 
