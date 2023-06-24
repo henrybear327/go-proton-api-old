@@ -56,35 +56,39 @@ func (createFileReq *CreateFileReq) SetHash(name string, hashKey []byte) error {
 	return nil
 }
 
-func (createFileReq *CreateFileReq) SetContentKeyPacketAndSignature(kr, addrKR *crypto.KeyRing) error {
+func (createFileReq *CreateFileReq) SetContentKeyPacketAndSignature(kr, addrKR *crypto.KeyRing) (*crypto.SessionKey, error) {
 	newSessionKey, err := crypto.GenerateSessionKey()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	encSessionKey, err := kr.EncryptSessionKey(newSessionKey)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	sessionKeyPlainMessage := crypto.NewPlainMessage(newSessionKey.Key)
 	sessionKeySignature, err := addrKR.SignDetached(sessionKeyPlainMessage)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	armoredSessionKeySignature, err := sessionKeySignature.GetArmored()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	createFileReq.ContentKeyPacket = base64.StdEncoding.EncodeToString(encSessionKey)
 	createFileReq.ContentKeyPacketSignature = armoredSessionKeySignature
-	return nil
+	return newSessionKey, nil
 }
 
 type CreateFileRes struct {
 	ID         string // Encrypted Link ID
 	RevisionID string // Encrypted Revision ID
+}
+
+type CreateRevisionRes struct {
+	ID string // Encrypted Revision ID
 }
 
 type UpdateRevisionReq struct {
