@@ -94,7 +94,7 @@ func (l Link) GetKeyRing(parentNodeKR, addrKR *crypto.KeyRing) (*crypto.KeyRing,
 	return crypto.NewKeyRing(unlockedKey)
 }
 
-func (l Link) GetHashKey(nodeKR *crypto.KeyRing) ([]byte, error) {
+func (l Link) GetHashKey(parentNodeKey *crypto.KeyRing) ([]byte, error) {
 	if l.Type != LinkTypeFolder {
 		return nil, errors.New("link is not a folder")
 	}
@@ -104,7 +104,7 @@ func (l Link) GetHashKey(nodeKR *crypto.KeyRing) ([]byte, error) {
 		return nil, err
 	}
 
-	dec, err := nodeKR.Decrypt(enc, nodeKR, crypto.GetUnixTime())
+	dec, err := parentNodeKey.Decrypt(enc, parentNodeKey, crypto.GetUnixTime())
 	if err != nil {
 		return nil, err
 	}
