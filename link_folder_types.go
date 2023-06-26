@@ -1,10 +1,6 @@
 package proton
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/base64"
-
 	"github.com/ProtonMail/gopenpgp/v2/crypto"
 )
 
@@ -24,30 +20,23 @@ type CreateFolderReq struct {
 }
 
 func (createFolderReq *CreateFolderReq) SetName(name string, addrKR, nodeKR *crypto.KeyRing) error {
-	clearTextName := crypto.NewPlainMessageFromString(name)
-
-	encName, err := nodeKR.Encrypt(clearTextName, addrKR)
-	if err != nil {
-		return err
-	}
-
-	encNameString, err := encName.GetArmored()
+	encNameString, err := getEncryptedName(name, addrKR, nodeKR)
 	if err != nil {
 		return err
 	}
 
 	createFolderReq.Name = encNameString
+
 	return nil
 }
 
 func (createFolderReq *CreateFolderReq) SetHash(name string, hashKey []byte) error {
-	mac := hmac.New(sha256.New, hashKey)
-	_, err := mac.Write([]byte(name))
+	nameHash, err := getNameHash(name, hashKey)
 	if err != nil {
 		return err
 	}
 
-	createFolderReq.Hash = base64.StdEncoding.EncodeToString(mac.Sum(nil))
+	createFolderReq.Hash = nameHash
 
 	return nil
 }
