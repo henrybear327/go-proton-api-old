@@ -5,6 +5,8 @@
 <a href="https://goreportcard.com/report/github.com/henrybear327/go-proton-api"><img src="https://goreportcard.com/badge/github.com/henrybear327/go-proton-api" alt="Go Report Card"></a>
 <a href="LICENSE"><img src="https://img.shields.io/github/license/ProtonMail/go-proton-api.svg" alt="License"></a>
 
+> Forked from [go-proton-api](https://github.com/ProtonMail/go-proton-api).
+
 This repository holds Go Proton API, a Go library implementing a client and development server for (a subset of) the Proton REST API.
 
 The license can be found in the [LICENSE](./LICENSE) file.
@@ -20,4 +22,4 @@ Most of the integration tests run locally. The ones that interact with Proton se
 
 ## Contribution
 
-The library is maintained by Proton AG, and is not actively looking for contributors.
+The upstream library is maintained by Proton AG, and is not actively looking for contributors.
