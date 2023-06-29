@@ -82,10 +82,6 @@ func (c *Client) EmptyTrash(ctx context.Context, shareID string) error {
 		return err
 	}
 
-	if res.Code != SuccessCode {
-		return fmt.Errorf("failed to empty trash: %v", res.Code)
-	}
-
 	return nil
 }
 

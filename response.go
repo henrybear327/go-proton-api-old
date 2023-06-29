@@ -22,6 +22,9 @@ const (
 	SuccessCode               Code = 1000
 	MultiCode                 Code = 1001
 	InvalidValue              Code = 2001
+	AFileOrFolderNameExist    Code = 2500
+	ADraftExist               Code = 2500
+	FileCanNotBeFound         Code = 2501
 	AppVersionMissingCode     Code = 5001
 	AppVersionBadCode         Code = 5003
 	UsernameInvalid           Code = 6003 // Deprecated, but still used.
@@ -29,6 +32,12 @@ const (
 	HumanVerificationRequired Code = 9001
 	PaidPlanRequired          Code = 10004
 	AuthRefreshTokenInvalid   Code = 10013
+)
+
+var (
+	ErrAFileOrFolderNameExist = errors.New("a file or folder with that name already exists (Code=2500, Status=422)")
+	ErrADraftExist            = errors.New("draft already exists on this revision (Code=2500, Status=409)")
+	ErrFileCanNotBeFound      = errors.New("File cannot be found. (Code=2501, Status=422)")
 )
 
 // APIError represents an error returned by the API.

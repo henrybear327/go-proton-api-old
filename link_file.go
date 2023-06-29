@@ -2,7 +2,9 @@ package proton
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/go-resty/resty/v2"
@@ -75,9 +77,21 @@ func (c *Client) CreateRevision(ctx context.Context, shareID, linkID string) (Cr
 		Revision CreateRevisionRes
 	}
 
-	if err := c.do(ctx, func(r *resty.Request) (*resty.Response, error) {
+	resp, err := c.doRes(ctx, func(r *resty.Request) (*resty.Response, error) {
 		return r.SetResult(&res).Post("/drive/shares/" + shareID + "/files/" + linkID + "/revisions")
-	}); err != nil {
+	})
+	if err != nil { // if the status code is not 200~299, it's considered an error
+		if resp.StatusCode() == http.StatusUnprocessableEntity {
+			var apiError APIError
+			err := json.Unmarshal(resp.Body(), &apiError)
+			if err != nil {
+				return CreateRevisionRes{}, err
+			}
+			if apiError.Code == FileCanNotBeFound {
+				return CreateRevisionRes{}, ErrFileCanNotBeFound
+			}
+		}
+
 		return CreateRevisionRes{}, err
 	}
 
