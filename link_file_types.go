@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"time"
 
@@ -34,7 +35,7 @@ func getNameHash(name string, hashKey []byte) (string, error) {
 		return "", err
 	}
 
-	return base64.StdEncoding.EncodeToString(mac.Sum(nil)), nil
+	return hex.EncodeToString(mac.Sum(nil)), nil
 }
 
 type MoveLinkReq struct {
