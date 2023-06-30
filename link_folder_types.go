@@ -31,7 +31,7 @@ func (createFolderReq *CreateFolderReq) SetName(name string, addrKR, nodeKR *cry
 }
 
 func (createFolderReq *CreateFolderReq) SetHash(name string, hashKey []byte) error {
-	nameHash, err := getNameHash(name, hashKey)
+	nameHash, err := GetNameHash(name, hashKey)
 	if err != nil {
 		return err
 	}

@@ -28,7 +28,7 @@ func getEncryptedName(name string, addrKR, nodeKR *crypto.KeyRing) (string, erro
 	return encNameString, nil
 }
 
-func getNameHash(name string, hashKey []byte) (string, error) {
+func GetNameHash(name string, hashKey []byte) (string, error) {
 	mac := hmac.New(sha256.New, hashKey)
 	_, err := mac.Write([]byte(name))
 	if err != nil {
@@ -61,7 +61,7 @@ func (moveLinkReq *MoveLinkReq) SetName(name string, addrKR, nodeKR *crypto.KeyR
 }
 
 func (moveLinkReq *MoveLinkReq) SetHash(name string, hashKey []byte) error {
-	nameHash, err := getNameHash(name, hashKey)
+	nameHash, err := GetNameHash(name, hashKey)
 	if err != nil {
 		return err
 	}
@@ -98,7 +98,7 @@ func (createFileReq *CreateFileReq) SetName(name string, addrKR, nodeKR *crypto.
 }
 
 func (createFileReq *CreateFileReq) SetHash(name string, hashKey []byte) error {
-	nameHash, err := getNameHash(name, hashKey)
+	nameHash, err := GetNameHash(name, hashKey)
 	if err != nil {
 		return err
 	}
