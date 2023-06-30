@@ -54,7 +54,7 @@ func (c *Client) CreateFile(ctx context.Context, shareID string, req CreateFileR
 				return CreateFileRes{}, err
 			}
 			if apiError.Code == AFileOrFolderNameExist {
-				return CreateFileRes{}, ErrAFileOrFolderNameExist
+				return CreateFileRes{}, ErrFileNameExist
 			}
 		}
 		if resp.StatusCode() == http.StatusConflict {
@@ -91,7 +91,7 @@ func (c *Client) CreateFolder(ctx context.Context, shareID string, req CreateFol
 				return CreateFolderRes{}, err
 			}
 			if apiError.Code == AFileOrFolderNameExist {
-				return CreateFolderRes{}, ErrAFileOrFolderNameExist
+				return CreateFolderRes{}, ErrFolderNameExist
 			}
 		}
 

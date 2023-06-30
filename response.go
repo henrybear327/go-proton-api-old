@@ -35,9 +35,10 @@ const (
 )
 
 var (
-	ErrAFileOrFolderNameExist = errors.New("a file or folder with that name already exists (Code=2500, Status=422)")
-	ErrADraftExist            = errors.New("draft already exists on this revision (Code=2500, Status=409)")
-	ErrFileCanNotBeFound      = errors.New("File cannot be found. (Code=2501, Status=422)")
+	ErrFileNameExist     = errors.New("a file with that name already exists (Code=2500, Status=422)")
+	ErrFolderNameExist   = errors.New("a folder with that name already exists (Code=2500, Status=422)")
+	ErrADraftExist       = errors.New("draft already exists on this revision (Code=2500, Status=409)")
+	ErrFileCanNotBeFound = errors.New("File cannot be found. (Code=2501, Status=422)")
 )
 
 // APIError represents an error returned by the API.
