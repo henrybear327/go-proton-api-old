@@ -42,7 +42,7 @@ type MoveLinkReq struct {
 	ParentLinkID string
 
 	Name                    string // Encrypted File Name
-	OriginalHash            string
+	OriginalHash            string // Old Encrypted File Name Hash
 	Hash                    string // Encrypted File Name Hash by using parent's NodeHashKey
 	NodePassphrase          string // The passphrase used to unlock the NodeKey, encrypted by the owning Link/Share keyring.
 	NodePassphraseSignature string // The signature of the NodePassphrase
