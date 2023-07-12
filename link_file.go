@@ -2,9 +2,7 @@ package proton
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"net/http"
 	"strconv"
 
 	"github.com/go-resty/resty/v2"
@@ -66,9 +64,15 @@ func (c *Client) GetRevision(ctx context.Context, shareID, linkID, revisionID st
 	return res.Revision, nil
 }
 
-func (c *Client) UpdateRevision(ctx context.Context, shareID, linkID, revisionID string, req UpdateRevisionReq) error {
+func (c *Client) CommitRevision(ctx context.Context, shareID, linkID, revisionID string, req CommitRevisionReq) error {
 	return c.do(ctx, func(r *resty.Request) (*resty.Response, error) {
 		return r.SetBody(req).Put("/drive/shares/" + shareID + "/files/" + linkID + "/revisions/" + revisionID)
+	})
+}
+
+func (c *Client) DeleteRevision(ctx context.Context, shareID, linkID, revisionID string) error {
+	return c.do(ctx, func(r *resty.Request) (*resty.Response, error) {
+		return r.Delete("/drive/shares/" + shareID + "/files/" + linkID + "/revisions/" + revisionID)
 	})
 }
 
@@ -77,21 +81,9 @@ func (c *Client) CreateRevision(ctx context.Context, shareID, linkID string) (Cr
 		Revision CreateRevisionRes
 	}
 
-	resp, err := c.doRes(ctx, func(r *resty.Request) (*resty.Response, error) {
+	if err := c.do(ctx, func(r *resty.Request) (*resty.Response, error) {
 		return r.SetResult(&res).Post("/drive/shares/" + shareID + "/files/" + linkID + "/revisions")
-	})
-	if err != nil { // if the status code is not 200~299, it's considered an error
-		if resp.StatusCode() == http.StatusUnprocessableEntity {
-			var apiError APIError
-			err := json.Unmarshal(resp.Body(), &apiError)
-			if err != nil {
-				return CreateRevisionRes{}, err
-			}
-			if apiError.Code == FileCanNotBeFound {
-				return CreateRevisionRes{}, ErrFileCanNotBeFound
-			}
-		}
-
+	}); err != nil {
 		return CreateRevisionRes{}, err
 	}
 

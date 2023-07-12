@@ -143,9 +143,7 @@ type CreateRevisionRes struct {
 	ID string // Encrypted Revision ID
 }
 
-type UpdateRevisionReq struct {
-	BlockList         []BlockToken
-	State             RevisionState
+type CommitRevisionReq struct {
 	ManifestSignature string
 	SignatureAddress  string
 	XAttr             string
@@ -160,7 +158,7 @@ type RevisionXAttr struct {
 	Common RevisionXAttrCommon
 }
 
-func (updateRevisionReq *UpdateRevisionReq) SetEncXAttrString(addrKR, nodeKR *crypto.KeyRing, modificationTime time.Time, size int64) error {
+func (commitRevisionReq *CommitRevisionReq) SetEncXAttrString(addrKR, nodeKR *crypto.KeyRing, modificationTime time.Time, size int64) error {
 	// Source
 	// - https://github.com/ProtonMail/WebClients/blob/099a2451b51dea38b5f0e07ec3b8fcce07a88303/packages/shared/lib/interfaces/drive/link.ts#L53
 	// - https://github.com/ProtonMail/WebClients/blob/main/applications/drive/src/app/store/_links/extendedAttributes.ts#L139
@@ -191,7 +189,7 @@ func (updateRevisionReq *UpdateRevisionReq) SetEncXAttrString(addrKR, nodeKR *cr
 		return err
 	}
 
-	updateRevisionReq.XAttr = encXattrString
+	commitRevisionReq.XAttr = encXattrString
 	return nil
 }
 
