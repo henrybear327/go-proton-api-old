@@ -180,6 +180,32 @@ type RevisionMetadata struct {
 	ThumbnailHash     string        // Hash of the thumbnail
 }
 
+func (revisionMetadata *RevisionMetadata) GetDecXAttrString(addrKR, nodeKR *crypto.KeyRing) (*RevisionXAttrCommon, error) {
+	if revisionMetadata.XAttr == "" {
+		return nil, nil
+	}
+
+	// decrypt the modification time and size
+	XAttrMsg, err := crypto.NewPGPMessageFromArmored(revisionMetadata.XAttr)
+	if err != nil {
+		return nil, err
+	}
+
+	decXAttr, err := nodeKR.Decrypt(XAttrMsg, addrKR, crypto.GetUnixTime())
+	if err != nil {
+		return nil, err
+	}
+
+	var data RevisionXAttr
+	err = json.Unmarshal(decXAttr.Data, &data)
+	if err != nil {
+		// TODO: if Unmarshal fails, maybe it's because the file system is missing the field?
+		return nil, err
+	}
+
+	return &data.Common, nil
+}
+
 // Revisions are only for files, they represent “versions” of files.
 // Each file can have 1 active revision and n obsolete revisions.
 type Revision struct {
