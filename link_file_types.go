@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
-	"time"
 
 	"github.com/ProtonMail/gopenpgp/v2/crypto"
 )
@@ -152,13 +151,15 @@ type CommitRevisionReq struct {
 type RevisionXAttrCommon struct {
 	ModificationTime string
 	Size             int64
+	BlockSizes       []int64
+	Digests          string // sha1 string
 }
 
 type RevisionXAttr struct {
 	Common RevisionXAttrCommon
 }
 
-func (commitRevisionReq *CommitRevisionReq) SetEncXAttrString(addrKR, nodeKR *crypto.KeyRing, modificationTime time.Time, size int64) error {
+func (commitRevisionReq *CommitRevisionReq) SetEncXAttrString(addrKR, nodeKR *crypto.KeyRing, xAttrCommon *RevisionXAttrCommon) error {
 	// Source
 	// - https://github.com/ProtonMail/WebClients/blob/099a2451b51dea38b5f0e07ec3b8fcce07a88303/packages/shared/lib/interfaces/drive/link.ts#L53
 	// - https://github.com/ProtonMail/WebClients/blob/main/applications/drive/src/app/store/_links/extendedAttributes.ts#L139
@@ -167,13 +168,13 @@ func (commitRevisionReq *CommitRevisionReq) SetEncXAttrString(addrKR, nodeKR *cr
 	//    Common: {
 	//        ModificationTime: "2021-09-16T07:40:54+0000",
 	//        Size: 13283,
+	// 		  BlockSizes: [1,2,3],
+	//        Digests: "sha1 string"
 	//    },
 	// }
+
 	jsonByteArr, err := json.Marshal(RevisionXAttr{
-		Common: RevisionXAttrCommon{
-			ModificationTime: modificationTime.Format("2006-01-02T15:04:05-0700"), /* ISO8601 */
-			Size:             size,
-		},
+		Common: *xAttrCommon,
 	})
 	if err != nil {
 		return err
