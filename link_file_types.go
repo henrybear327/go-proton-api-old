@@ -152,7 +152,7 @@ type RevisionXAttrCommon struct {
 	ModificationTime string
 	Size             int64
 	BlockSizes       []int64
-	Digests          string // sha1 string
+	Digests          map[string]string
 }
 
 type RevisionXAttr struct {
