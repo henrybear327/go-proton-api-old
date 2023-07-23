@@ -107,7 +107,7 @@ func (createFileReq *CreateFileReq) SetHash(name string, hashKey []byte) error {
 	return nil
 }
 
-func (createFileReq *CreateFileReq) SetContentKeyPacketAndSignature(kr, addrKR *crypto.KeyRing) (*crypto.SessionKey, error) {
+func (createFileReq *CreateFileReq) SetContentKeyPacketAndSignature(kr *crypto.KeyRing) (*crypto.SessionKey, error) {
 	newSessionKey, err := crypto.GenerateSessionKey()
 	if err != nil {
 		return nil, err
@@ -119,7 +119,7 @@ func (createFileReq *CreateFileReq) SetContentKeyPacketAndSignature(kr, addrKR *
 	}
 
 	sessionKeyPlainMessage := crypto.NewPlainMessage(newSessionKey.Key)
-	sessionKeySignature, err := addrKR.SignDetached(sessionKeyPlainMessage)
+	sessionKeySignature, err := kr.SignDetached(sessionKeyPlainMessage)
 	if err != nil {
 		return nil, err
 	}
