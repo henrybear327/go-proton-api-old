@@ -7,11 +7,11 @@ type User struct {
 	Email       string
 	Keys        Keys
 
-	UsedSpace int
-	MaxSpace  int
-	MaxUpload int
+	UsedSpace int64
+	MaxSpace  int64
+	MaxUpload int64
 
-	Credit   int
+	Credit   int64
 	Currency string
 }
 
