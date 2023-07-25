@@ -5,23 +5,23 @@ go 1.18
 require (
 	github.com/Masterminds/semver/v3 v3.2.0
 	github.com/ProtonMail/gluon v0.17.1-0.20230724134000-308be39be96e
-	github.com/ProtonMail/go-crypto v0.0.0-20230518184743-7afd39499903
+	github.com/ProtonMail/go-crypto v0.0.0-20230717121422-5aa5874ade95
 	github.com/ProtonMail/go-srp v0.0.7
-	github.com/ProtonMail/gopenpgp/v2 v2.7.1-proton
+	github.com/ProtonMail/gopenpgp/v2 v2.7.2
 	github.com/PuerkitoBio/goquery v1.8.1
-	github.com/bradenaw/juniper v0.12.0
+	github.com/bradenaw/juniper v0.13.1
 	github.com/emersion/go-message v0.16.0
-	github.com/emersion/go-vcard v0.0.0-20230331202150-f3d26859ccd3
+	github.com/emersion/go-vcard v0.0.0-20230626131229-38c18b295bbd
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
-	github.com/sirupsen/logrus v1.9.2
+	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.3
 	github.com/urfave/cli/v2 v2.24.4
 	go.uber.org/goleak v1.2.1
-	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
-	golang.org/x/net v0.10.0
-	golang.org/x/text v0.9.0
+	golang.org/x/exp v0.0.0-20230725093048-515e97ebf090
+	golang.org/x/net v0.12.0
+	golang.org/x/text v0.11.0
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.30.0
 )
@@ -60,9 +60,9 @@ require (
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
-	golang.org/x/sync v0.2.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
+	golang.org/x/crypto v0.11.0 // indirect
+	golang.org/x/sync v0.3.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
 	google.golang.org/genproto v0.0.0-20230221151758-ace64dc21148 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
