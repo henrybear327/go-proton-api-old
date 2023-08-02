@@ -47,21 +47,29 @@ const (
 	LinkStateRestoring
 )
 
-func (l Link) GetName(parentNodeKR, addrKR *crypto.KeyRing) (string, error) {
+func (l Link) GetName(parentNodeKR, addrKR *crypto.KeyRing, skipSignatureVerification bool) (string, error) {
 	encName, err := crypto.NewPGPMessageFromArmored(l.Name)
 	if err != nil {
 		return "", err
 	}
 
-	decName, err := parentNodeKR.Decrypt(encName, addrKR, crypto.GetUnixTime())
-	if err != nil {
-		return "", err
+	var decName *crypto.PlainMessage
+	if skipSignatureVerification {
+		decName, err = parentNodeKR.Decrypt(encName, nil, crypto.GetUnixTime())
+		if err != nil {
+			return "", err
+		}
+	} else {
+		decName, err = parentNodeKR.Decrypt(encName, addrKR, crypto.GetUnixTime())
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return decName.GetString(), nil
 }
 
-func (l Link) GetKeyRing(parentNodeKR, addrKR *crypto.KeyRing) (*crypto.KeyRing, error) {
+func (l Link) GetKeyRing(parentNodeKR, addrKR *crypto.KeyRing, skipSignatureVerification bool) (*crypto.KeyRing, error) {
 	enc, err := crypto.NewPGPMessageFromArmored(l.NodePassphrase)
 	if err != nil {
 		return nil, err
@@ -77,8 +85,10 @@ func (l Link) GetKeyRing(parentNodeKR, addrKR *crypto.KeyRing) (*crypto.KeyRing,
 		return nil, err
 	}
 
-	if err := addrKR.VerifyDetached(dec, sig, crypto.GetUnixTime()); err != nil {
-		return nil, err
+	if !skipSignatureVerification {
+		if err := addrKR.VerifyDetached(dec, sig, crypto.GetUnixTime()); err != nil {
+			return nil, err
+		}
 	}
 
 	lockedKey, err := crypto.NewKeyFromArmored(l.NodeKey)
@@ -94,7 +104,7 @@ func (l Link) GetKeyRing(parentNodeKR, addrKR *crypto.KeyRing) (*crypto.KeyRing,
 	return crypto.NewKeyRing(unlockedKey)
 }
 
-func (l Link) GetHashKey(parentNodeKey *crypto.KeyRing) ([]byte, error) {
+func (l Link) GetHashKey(parentNodeKey *crypto.KeyRing, skipSignatureVerification bool) ([]byte, error) {
 	if l.Type != LinkTypeFolder {
 		return nil, errors.New("link is not a folder")
 	}
@@ -104,9 +114,17 @@ func (l Link) GetHashKey(parentNodeKey *crypto.KeyRing) ([]byte, error) {
 		return nil, err
 	}
 
-	dec, err := parentNodeKey.Decrypt(enc, parentNodeKey, crypto.GetUnixTime())
-	if err != nil {
-		return nil, err
+	var dec *crypto.PlainMessage
+	if skipSignatureVerification {
+		dec, err = parentNodeKey.Decrypt(enc, nil, crypto.GetUnixTime())
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		dec, err = parentNodeKey.Decrypt(enc, parentNodeKey, crypto.GetUnixTime())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return dec.GetBinary(), nil
