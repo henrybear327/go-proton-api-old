@@ -4,8 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"log"
-	"strings"
 
 	"github.com/ProtonMail/gopenpgp/v2/crypto"
 )
@@ -108,17 +106,7 @@ func (l Link) GetHashKey(parentNodeKey *crypto.KeyRing) ([]byte, error) {
 
 	dec, err := parentNodeKey.Decrypt(enc, parentNodeKey, crypto.GetUnixTime())
 	if err != nil {
-		// might have the case where signature is missing, so we will try again without verifying the signature
-		if strings.Contains(err.Error(), "Missing signature") {
-			log.Println("GetHashKey has signature verification error. Trying to decrypt again witout verifying the signature")
-			dec, err = parentNodeKey.Decrypt(enc, nil, crypto.GetUnixTime())
-			if err != nil {
-				return nil, err
-			}
-			log.Println("GetHashKey without signature verification has completed successfully")
-		} else {
-			return nil, err
-		}
+		return nil, err
 	}
 
 	return dec.GetBinary(), nil
